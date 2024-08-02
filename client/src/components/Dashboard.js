@@ -10,13 +10,12 @@ export default function Dashboard() {
   const [allArticles, setAllArticles] = useState([]);
   const [displayedArticles, setDisplayedArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false); // State to manage additional loading
+  const [loadingMore, setLoadingMore] = useState(false);
   const [query, setQuery] = useState("Apple");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const loadingBarRef = useRef(null);
 
-  // Fetch all articles initially
   const fetchAllArticles = async (searchQuery) => {
     if (loadingBarRef.current) {
       loadingBarRef.current.continuousStart();
@@ -24,23 +23,28 @@ export default function Dashboard() {
 
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_URL}/api/search?q=${searchQuery}`
+        `${process.env.REACT_APP_NEWS_URL}api/search?q=${searchQuery}`
       );
-      const filteredArticles = response.data.articles.filter(
+
+      console.log("API Response:", response.data);
+
+      const articles = response.data?.articles || [];
+      const filteredArticles = articles.filter(
         (article) =>
-          article.source.name !== "[Removed]" &&
+          article.source?.name !== "[Removed]" &&
           article.content !== "[Removed]" &&
           article.urlToImage !== "[Removed]" &&
           article.title !== "[Removed]"
       );
+
       setAllArticles(filteredArticles);
       setDisplayedArticles(filteredArticles.slice(0, INITIAL_PAGE_SIZE));
-      setHasMore(filteredArticles.length > INITIAL_PAGE_SIZE); // Determine if there are more articles to load
+      setHasMore(filteredArticles.length > INITIAL_PAGE_SIZE);
     } catch (error) {
       console.error("Error fetching the articles: ", error);
     } finally {
       setLoading(false);
-      setLoadingMore(false); // End loading more state
+      setLoadingMore(false);
       if (loadingBarRef.current) {
         loadingBarRef.current.complete();
       }
@@ -65,7 +69,7 @@ export default function Dashboard() {
         const newArticles = allArticles.slice(0, newEndIndex);
         setDisplayedArticles(newArticles);
         setLoadingMore(false);
-        setHasMore(newArticles.length < allArticles.length); // Update hasMore
+        setHasMore(newArticles.length < allArticles.length);
       }
     };
 
