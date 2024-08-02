@@ -78,20 +78,27 @@ export default function TopHeadlines() {
 
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_URL}/api/top-headlines?country=${selectedCountry}`
+        `${process.env.REACT_APP_NEWS_URL}api/top-headlines?country=${selectedCountry}`
       );
-      const filteredArticles = response.data.articles.filter(
-        (article) =>
-          article.source.name !== "[Removed]" &&
-          article.content !== "[Removed]" &&
-          article.urlToImage !== "[Removed]" &&
-          article.title !== "[Removed]" &&
-          article.urlToImage &&
-          article.content
-      );
-      setAllArticles(filteredArticles);
-      setDisplayedArticles(filteredArticles.slice(0, INITIAL_PAGE_SIZE));
-      setHasMore(filteredArticles.length > INITIAL_PAGE_SIZE);
+      console.log("API Response:", response.data); // Log the entire response
+      if (response.data && response.data.articles) {
+        const filteredArticles = response.data.articles.filter(
+          (article) =>
+            article.source.name !== "[Removed]" &&
+            article.content !== "[Removed]" &&
+            article.urlToImage !== "[Removed]" &&
+            article.title !== "[Removed]" &&
+            article.urlToImage &&
+            article.content
+        );
+        setAllArticles(filteredArticles);
+        setDisplayedArticles(filteredArticles.slice(0, INITIAL_PAGE_SIZE));
+        setHasMore(filteredArticles.length > INITIAL_PAGE_SIZE);
+      } else {
+        setAllArticles([]);
+        setDisplayedArticles([]);
+        setHasMore(false);
+      }
     } catch (error) {
       console.error("Error fetching the articles: ", error);
     } finally {
