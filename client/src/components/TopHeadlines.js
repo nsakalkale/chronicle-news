@@ -80,7 +80,6 @@ export default function TopHeadlines() {
       const response = await axios.get(
         `${process.env.REACT_APP_NEWS_URL}api/top-headlines?country=${selectedCountry}`
       );
-      console.log("API Response:", response.data); // Log the entire response
       if (response.data && response.data.articles) {
         const filteredArticles = response.data.articles.filter(
           (article) =>

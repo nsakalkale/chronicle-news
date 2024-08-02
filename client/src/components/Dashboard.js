@@ -26,8 +26,6 @@ export default function Dashboard() {
         `${process.env.REACT_APP_NEWS_URL}api/search?q=${searchQuery}`
       );
 
-      console.log("API Response:", response.data);
-
       const articles = response.data?.articles || [];
       const filteredArticles = articles.filter(
         (article) =>
